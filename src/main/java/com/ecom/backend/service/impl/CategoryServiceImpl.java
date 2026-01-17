@@ -2,12 +2,17 @@ package com.ecom.backend.service.impl;
 
 
 import com.ecom.backend.dto.CategoryDto;
+import com.ecom.backend.dto.PagedResponse;
 import com.ecom.backend.entity.Category;
 import com.ecom.backend.exceptions.ResourceNotFoundException;
 import com.ecom.backend.repo.CategoryRepo;
 import com.ecom.backend.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,15 +34,23 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public List<CategoryDto> getAllCategories() {
+    public PagedResponse<CategoryDto> getAllCategories(
+            int page,
+            int size,
+            String sortBy,
+            String sortDir) {
 
-        List<Category> allCateg=categoryRepo.findAll();
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
 
-        if(allCateg.isEmpty()){
-            throw new ResourceNotFoundException("No categories found!!");
-        }
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Category> categoryPage = categoryRepo.findAll(pageable);
 
-        return allCateg.stream().map(x->modelMapper.map(x, CategoryDto.class)).toList();
+        Page<CategoryDto> categoryDtoPage=categoryPage.map(category ->
+                modelMapper.map(category, CategoryDto.class));
+
+        return PagedResponse.fromPage(categoryDtoPage);
 
     }
 

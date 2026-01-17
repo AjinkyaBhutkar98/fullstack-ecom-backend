@@ -2,9 +2,11 @@ package com.ecom.backend.controller;
 
 
 import com.ecom.backend.dto.CategoryDto;
+import com.ecom.backend.dto.PagedResponse;
 import com.ecom.backend.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +21,15 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/api/v1/all")
-    public ResponseEntity<List<CategoryDto>> getAll(){
+    public ResponseEntity<PagedResponse<CategoryDto>> getAll(
+            @RequestParam(name = "page",defaultValue = "0") int page,
+            @RequestParam(name = "size",defaultValue = "10") int size,
+            @RequestParam(name = "sortBy",defaultValue = "name") String sortBy,
+            @RequestParam(name = "sortDir",defaultValue = "asc") String sortDir
 
-        return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
+    ){
+
+        return new ResponseEntity<>(categoryService.getAllCategories(page,size,sortBy,sortDir), HttpStatus.OK);
 
     }
 
