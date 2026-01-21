@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table
 @Getter
@@ -21,5 +23,11 @@ public class Category {
 
     @Column(unique = true)
     private String name;
+
+//    @OneToMany
+//    private List<Product> product;
+
+//    @OneToOne
+//    private List<Product> product;
 
 }

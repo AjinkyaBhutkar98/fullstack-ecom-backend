@@ -38,7 +38,8 @@ public class CategoryServiceImpl implements CategoryService {
             int page,
             int size,
             String sortBy,
-            String sortDir) {
+            String sortDir
+    ) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
