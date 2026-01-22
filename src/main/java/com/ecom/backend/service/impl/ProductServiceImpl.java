@@ -5,6 +5,7 @@ import com.ecom.backend.dto.PagedResponse;
 import com.ecom.backend.dto.ProductDto;
 import com.ecom.backend.entity.Category;
 import com.ecom.backend.entity.Product;
+import com.ecom.backend.exceptions.ResourceNotFoundException;
 import com.ecom.backend.repo.CategoryRepo;
 import com.ecom.backend.repo.ProductRepo;
 import com.ecom.backend.service.ProductService;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -74,5 +77,39 @@ public class ProductServiceImpl implements ProductService {
                 modelMapper.map(product, ProductDto.class));
 
         return PagedResponse.fromPage(productDtoPage);
+    }
+
+    @Override
+    public List<ProductDto> getProductByCategory(Long categoryId) {
+
+        Category category=categoryRepo.findById(categoryId).orElseThrow(()->new RuntimeException("Category Not found :"+categoryId));
+
+        List<Product> getProductsListByCategory=productRepo.findByCategoryOrderByPriceAsc(category);
+
+        return getProductsListByCategory.stream().map(product->modelMapper.map(product,ProductDto.class)).toList();
+    }
+
+    @Override
+    public List<ProductDto> getProductsByKeyword(String keyword) {
+
+        List<Product> getProductsListByKeyword=productRepo.findByNameContainingIgnoreCase(keyword);
+
+        if(getProductsListByKeyword.isEmpty()){
+            throw new ResourceNotFoundException("No products found with keyword containing :"+keyword);
+        }
+
+        return getProductsListByKeyword.stream().map(product->modelMapper.map(product,ProductDto.class)).toList();
+    }
+
+    @Override
+    public ProductDto updateProduct(ProductDto productDto, Long productId) {
+
+        Product product=productRepo.findById(productId).orElseThrow(()->new ResourceNotFoundException("Product not found : "+productId));
+
+        modelMapper.map(productDto,product);
+
+        Product updatedProduct=productRepo.save(product);
+
+        return modelMapper.map(updatedProduct, ProductDto.class);
     }
 }

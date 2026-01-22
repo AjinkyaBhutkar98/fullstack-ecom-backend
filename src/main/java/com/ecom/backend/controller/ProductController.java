@@ -38,4 +38,29 @@ public class ProductController {
         return new ResponseEntity<>(productService.getAllProducts(page,size,sortBy,sortDir),HttpStatus.OK);
     }
 
+    //get products by category
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable Long categoryId){
+
+        return new ResponseEntity<>(productService.getProductByCategory(categoryId),HttpStatus.OK);
+    }
+
+    //get products by keyword
+    @GetMapping("/keyword/{keyword}")
+    public ResponseEntity<List<ProductDto>> getProductsByKeyword(@PathVariable String keyword){
+
+        return new ResponseEntity<>(productService.getProductsByKeyword(keyword),HttpStatus.OK);
+
+    }
+
+    //update product (admin api)
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto,@PathVariable Long id){
+
+        ProductDto updatedProductDto=productService.updateProduct(productDto,id);
+
+        return new ResponseEntity<>(updatedProductDto,HttpStatus.OK);
+
+    }
+
 }
