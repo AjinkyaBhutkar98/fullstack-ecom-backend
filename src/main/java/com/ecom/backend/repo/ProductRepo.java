@@ -2,6 +2,8 @@ package com.ecom.backend.repo;
 
 import com.ecom.backend.entity.Category;
 import com.ecom.backend.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,9 +15,9 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
 
 
     //select * from products where category_id=1 order by price asc;
-    List<Product> findByCategoryOrderByPriceAsc(Category category);
+    Page<Product> findByCategoryOrderByPriceAsc(Category category, Pageable pageable);
 
-    List<Product> findByNameContainingIgnoreCase(String keyword);
+    Page<Product> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
 
     boolean existsByNameAndCategory(String name, Category category);
 }

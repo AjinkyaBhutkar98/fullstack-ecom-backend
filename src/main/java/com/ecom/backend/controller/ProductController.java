@@ -1,5 +1,6 @@
 package com.ecom.backend.controller;
 
+import com.ecom.backend.config.AppConstants;
 import com.ecom.backend.dto.PagedResponse;
 import com.ecom.backend.dto.ProductDto;
 import com.ecom.backend.service.ProductService;
@@ -43,16 +44,26 @@ public class ProductController {
 
     //get products by category
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable Long categoryId){
+    public ResponseEntity<PagedResponse<ProductDto>> getProductsByCategory(
+            @RequestParam(name = "page",defaultValue = AppConstants.PAGE_NUMBER) int page,
+            @RequestParam(name = "size",defaultValue = AppConstants.PAGE_SIZE) int size,
+            @RequestParam(name = "sortBy",defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy,
+            @RequestParam(name = "sortDir",defaultValue = AppConstants.SORT_DIR) String sortDir,
+            @PathVariable Long categoryId){
 
-        return new ResponseEntity<>(productService.getProductByCategory(categoryId),HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductByCategory(page,size,sortBy,sortDir,categoryId),HttpStatus.OK);
     }
 
     //get products by keyword
     @GetMapping("/keyword/{keyword}")
-    public ResponseEntity<List<ProductDto>> getProductsByKeyword(@PathVariable String keyword){
+    public ResponseEntity<PagedResponse<ProductDto>> getProductsByKeyword(
+            @RequestParam(name = "page",defaultValue = AppConstants.PAGE_NUMBER) int page,
+            @RequestParam(name = "size",defaultValue = AppConstants.PAGE_SIZE) int size,
+            @RequestParam(name = "sortBy",defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy,
+            @RequestParam(name = "sortDir",defaultValue = AppConstants.SORT_DIR) String sortDir,
+            @PathVariable String keyword){
 
-        return new ResponseEntity<>(productService.getProductsByKeyword(keyword),HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductsByKeyword(page,size,sortBy,sortDir,keyword),HttpStatus.OK);
 
     }
 

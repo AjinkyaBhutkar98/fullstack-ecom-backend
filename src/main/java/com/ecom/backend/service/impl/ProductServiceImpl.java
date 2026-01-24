@@ -104,29 +104,45 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getProductByCategory(Long categoryId) {
+    public PagedResponse<ProductDto> getProductByCategory(int page, int size, String sortBy, String sortDir,Long categoryId) {
 
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
         Category category=categoryRepo.findById(categoryId).orElseThrow(()->new RuntimeException("Category Not found :"+categoryId));
 
-        List<Product> getProductsListByCategory=productRepo.findByCategoryOrderByPriceAsc(category);
+        Page<Product> getProductsListByCategory=productRepo.findByCategoryOrderByPriceAsc(category,pageable);
 
+        Page<ProductDto> productDtoPage=getProductsListByCategory.map(product ->
+                modelMapper.map(product, ProductDto.class));
+//        Page<Product> productPage = productRepo.findAll(pageable);
         if(getProductsListByCategory.isEmpty()){
             throw new ResourceNotFoundException("No products found with category containing :"+category.getName());
         }
 
-        return getProductsListByCategory.stream().map(product->modelMapper.map(product,ProductDto.class)).toList();
+        return PagedResponse.fromPage(productDtoPage);
     }
 
     @Override
-    public List<ProductDto> getProductsByKeyword(String keyword) {
+    public PagedResponse<ProductDto> getProductsByKeyword(int page, int size, String sortBy, String sortDir,String keyword) {
 
-        List<Product> getProductsListByKeyword=productRepo.findByNameContainingIgnoreCase(keyword);
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> getProductsListByKeyword=productRepo.findByNameContainingIgnoreCase(keyword,pageable);
+
+        Page<ProductDto> productDtoPage=getProductsListByKeyword.map(product ->
+                modelMapper.map(product, ProductDto.class));
+
 
         if(getProductsListByKeyword.isEmpty()){
             throw new ResourceNotFoundException("No products found with keyword containing :"+keyword);
         }
-
-        return getProductsListByKeyword.stream().map(product->modelMapper.map(product,ProductDto.class)).toList();
+        return PagedResponse.fromPage(productDtoPage);
     }
 
     @Override

@@ -15,9 +15,9 @@ public interface ProductService {
 
     public PagedResponse<ProductDto> getAllProducts(int page, int size, String sortBy, String sortDir);
 
-    public List<ProductDto> getProductByCategory(Long categoryId);
+    public PagedResponse<ProductDto> getProductByCategory(int page, int size, String sortBy, String sortDir,Long categoryId);
 
-    public List<ProductDto> getProductsByKeyword(String keyword);
+    public PagedResponse<ProductDto> getProductsByKeyword(int page, int size, String sortBy, String sortDir,String keyword);
 
     public ProductDto updateProduct(ProductDto productDto,Long productId);
 
