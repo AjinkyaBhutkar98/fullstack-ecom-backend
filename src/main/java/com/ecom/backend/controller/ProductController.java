@@ -3,11 +3,14 @@ package com.ecom.backend.controller;
 import com.ecom.backend.dto.PagedResponse;
 import com.ecom.backend.dto.ProductDto;
 import com.ecom.backend.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -19,7 +22,7 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping("/admin/add/categories/{categoryId}")
-    public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto, @PathVariable Long categoryId){
+    public ResponseEntity<ProductDto> addProduct(@Valid @RequestBody ProductDto productDto, @PathVariable Long categoryId){
 
         System.out.println(productDto+" "+categoryId);
         ProductDto productDto1=productService.addProduct(productDto,categoryId);
@@ -61,6 +64,20 @@ public class ProductController {
 
         return new ResponseEntity<>(updatedProductDto,HttpStatus.OK);
 
+    }
+
+    @DeleteMapping("/delete/{productId}")
+    public ResponseEntity<ProductDto> deleteProduct(@PathVariable Long productId){
+
+        ProductDto deletedProduct=productService.deleteProduct(productId);
+
+        return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
+    }
+
+    @PutMapping("/update/image/{productId}")
+    public ResponseEntity<ProductDto> updateProductImage(@PathVariable Long productId, @RequestParam(name = "image")MultipartFile productImage) throws IOException {
+
+        return new ResponseEntity<>(productService.updateProductImage(productId,productImage),HttpStatus.OK);
     }
 
 }

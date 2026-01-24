@@ -24,8 +24,8 @@ public class Category {
     @Column(unique = true,columnDefinition = "LONGTEXT")
     private String name;
 
-//    @OneToMany
-//    private List<Product> product;
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
+    private List<Product> products;
 
 //    @OneToOne
 //    private List<Product> product;

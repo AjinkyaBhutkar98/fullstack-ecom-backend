@@ -1,6 +1,8 @@
 package com.ecom.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,14 +21,17 @@ public class Product {
     private long id;
 
     @Column(unique = true,nullable = false)
+    @Size(min = 3,message = "Product size should be min 3 characters")
     private String name;
 
     @Column
+    @NotBlank(message = "please give some description")
     private String description;
 
     private String image;
 
     @Column
+    @NotBlank(message = "please add some quantity in stock")
     private Integer quantity;
 
     private double price;
